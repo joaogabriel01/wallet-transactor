@@ -4,44 +4,44 @@ import { v4 as uuidv4 } from 'uuid';
 export class Transaction {
     private readonly id: string;
     private readonly idOrigin: string;
-    private accountOrigin: number;
+    private amountOrigin: number;
     private readonly idSender: string;
     private readonly value: number;
-    private accountSender: number;
+    private amountSender: number;
     constructor(
         idOrigin: string,
-        accountOrigin: number,
+        amountOrigin: number,
         idSender: string,
-        accountSender: number,
+        amountSender: number,
         value: number,
     ) {
         this.id = uuidv4();
         this.idOrigin = idOrigin;
         this.idSender = idSender;
         this.value = value;
-        this.accountOrigin = accountOrigin;
-        this.accountSender = accountSender;
+        this.amountOrigin = amountOrigin;
+        this.amountSender = amountSender;
     }
 
     public execute() {
-        if (this.value > this.accountOrigin) {
+        if (this.value > this.amountOrigin) {
             return left<string, boolean>(
                 'amount is greater than the balance in the account',
             );
         }
 
-        this.accountOrigin -= this.value;
-        this.accountSender += this.value;
+        this.amountOrigin -= this.value;
+        this.amountSender += this.value;
 
         return right<string, boolean>(true);
     }
 
     public getTheAmountFromAccountOfOrigin() {
-        return right<null, number>(this.accountOrigin);
+        return right<null, number>(this.amountOrigin);
     }
 
     public getTheAmountFromAccountSender() {
-        return right<null, number>(this.accountSender);
+        return right<null, number>(this.amountSender);
     }
 
     public getIdTransaction() {
