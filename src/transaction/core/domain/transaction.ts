@@ -8,6 +8,7 @@ export class Transaction {
     private readonly idSender: string;
     private readonly value: number;
     private amountSender: number;
+    private date: Date;
     constructor(
         idOrigin: string,
         amountOrigin: number,
@@ -21,6 +22,7 @@ export class Transaction {
         this.value = value;
         this.amountOrigin = amountOrigin;
         this.amountSender = amountSender;
+        this.date = new Date();
     }
 
     public execute() {
@@ -54,5 +56,9 @@ export class Transaction {
 
     public getIdSender() {
         return right<null, string>(this.idSender);
+    }
+
+    public getDate() {
+        return this.date;
     }
 }
