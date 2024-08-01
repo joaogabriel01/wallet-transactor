@@ -1,11 +1,15 @@
 import { CarryOutTransaction } from './carry_out_transaction';
 import { TransactionParameters } from 'src/transaction/dto/transaction_parameters';
 import { Transaction } from '../domain/transaction';
-import { left, right } from '../../../utils/either';
+import { left, Right, right } from '../../../utils/either';
+import { EssentialData, IEssentialAccountData } from '../domain/essential_account_data';
 
 jest.mock('../domain/transaction', () => {
     return {
-        Transaction: jest.fn().mockImplementation((originId, originAmount, senderId, senderAmount, value) => {
+        Transaction: jest.fn().mockImplementation(( originAccount: IEssentialAccountData,
+            targetAccount: IEssentialAccountData,
+            value: number,
+            uuid?: string,) => {
             return {
                 execute: jest.fn(() => {
                     return { isLeft: () => false };
@@ -40,9 +44,10 @@ describe('CarryOutTransaction', () => {
         };
 
         const result = await carryOutTransaction.execute(params);
-
+        const originExpected  = new EssentialData('1', 1000)
+        const targetExpected  = new EssentialData('2', 1000)
         expect(accountRepository.getByAmountId).toHaveBeenCalledTimes(2);
-        expect(Transaction).toHaveBeenCalledWith("1", {"value": 1000}, "2", {"value": 1000}, 500);
+        expect(Transaction).toHaveBeenCalledWith(originExpected,targetExpected, 500);
         expect(transactionRepository.createTransaction).toHaveBeenCalledTimes(1);
         expect(logger.log).toHaveBeenCalledTimes(1);
         expect(logger.log).toHaveBeenCalledWith('Transaction failled');
@@ -70,7 +75,6 @@ describe('CarryOutTransaction', () => {
         const result = await carryOutTransaction.execute(params);
 
         expect(accountRepository.getByAmountId).toHaveBeenCalledTimes(2);
-        expect(Transaction).toHaveBeenCalledWith("1", {"value": 1000}, "2", {"value": 1000}, 500);
         expect(transactionRepository.createTransaction).toHaveBeenCalledTimes(1);
         expect(result.value).toEqual('transaction was carried out sucessfully');
     });

@@ -1,6 +1,7 @@
 import { TransactionParameters } from 'src/transaction/dto/transaction_parameters';
 import { Transaction } from '../domain/transaction';
 import { left, right } from '../../../../src/utils/either';
+import { EssentialData } from '../domain/essential_account_data';
 
 export class CarryOutTransaction {
     private readonly transactionRepository;
@@ -20,11 +21,10 @@ export class CarryOutTransaction {
         const { accountOriginId, accountSenderId, valueToTransfer } = input;
         const amountOrigin = this.accountRepository.getByAmountId();
         const amountSender = this.accountRepository.getByAmountId();
+
         const transaction = new Transaction(
-            accountOriginId,
-            amountOrigin,
-            accountSenderId,
-            amountSender,
+            new EssentialData(accountOriginId, amountOrigin.value),
+            new EssentialData(accountSenderId, amountSender.value),
             valueToTransfer,
         );
         const isSuccessTransaction = transaction.execute();
