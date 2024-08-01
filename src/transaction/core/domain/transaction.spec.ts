@@ -1,3 +1,4 @@
+import { EssentialData } from './essential_account_data';
 import { Transaction } from './transaction';
 
 describe('Transaction Domain', () => {
@@ -10,8 +11,8 @@ describe('Transaction Domain', () => {
         expectedIdOrigin: string,
         expectedIdSender: string,
     ) {
-        expect(transaction.getIdOrigin().value).toBe(expectedIdOrigin);
-        expect(transaction.getIdSender().value).toBe(expectedIdSender);
+        expect(transaction.getOriginId().value).toBe(expectedIdOrigin);
+        expect(transaction.getTargetId().value).toBe(expectedIdSender);
         const response = transaction.execute();
         expect(response.isLeft()).toBe(expectError);
         expect(response.value).toBe(expectedResponse);
@@ -19,18 +20,16 @@ describe('Transaction Domain', () => {
             return;
         }
         const valueAccountOrigin =
-            transaction.getTheAmountFromAccountOfOrigin();
+            transaction.getOriginAccountAmount();
         expect(valueAccountOrigin.value).toBe(expectedAmountOrigin);
-        const valueAccountSender = transaction.getTheAmountFromAccountSender();
+        const valueAccountSender = transaction.getTargetAccountAmount();
         expect(valueAccountSender.value).toBe(expectedAmountSender);
     }
 
     it('should return an error when the amount is greater than the balance in the account', () => {
         const transaction = new Transaction(
-            'accountOrigin',
-            100,
-            'accountSender',
-            10,
+            new EssentialData('accountOrigin',100),
+            new EssentialData('accountSender',10),
             1000,
         );
         runTest(
@@ -46,10 +45,8 @@ describe('Transaction Domain', () => {
 
     it('should execute successfully when the amount is within the balance in the account', () => {
         const transaction = new Transaction(
-            'accountOrigin',
-            100,
-            'accountSender',
-            10,
+            new EssentialData('accountOrigin',100),
+            new EssentialData('accountSender',10),
             10,
         );
         runTest(
