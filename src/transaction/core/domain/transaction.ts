@@ -36,6 +36,10 @@ export class Transaction {
         return right<string, boolean>(true);
     }
 
+    public getAmount(): Either<string, number> {
+        return right<string, number>(this.value);
+    }
+
     public getOriginAccountAmount(): Either<string, number> {
         return right<string, number>(this.originAccount.getAmount());
     }
@@ -60,4 +64,3 @@ export class Transaction {
         return right(this.date);
     }
 }
-
