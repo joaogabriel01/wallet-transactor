@@ -10,7 +10,7 @@ export class TransactionEntity {
     // eslint-disable-next-line indent
     amount: number;
 
-    @Column()
+    @Column({ default: () => 'CURRENT_TIMESTAMP' })
     // eslint-disable-next-line indent
     date: Date;
 
@@ -21,4 +21,8 @@ export class TransactionEntity {
     @Column()
     // eslint-disable-next-line indent
     accountSender: string;
+
+    @Column({ default: true })
+    // eslint-disable-next-line indent
+    hasBeenReversed: boolean;
 }
