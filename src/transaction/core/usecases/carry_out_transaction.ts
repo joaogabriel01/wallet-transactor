@@ -32,7 +32,7 @@ export class CarryOutTransaction {
             return isSuccessTransaction;
         }
         const transactionCreated =
-            await this.transactionRepository.createTransaction(transaction);
+            await this.transactionRepository.save(transaction);
         if (transactionCreated.isLeft()) {
             this.logger.log(transactionCreated.value);
             return left<string, null>(

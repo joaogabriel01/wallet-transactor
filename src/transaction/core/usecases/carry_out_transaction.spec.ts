@@ -31,7 +31,7 @@ describe('CarryOutTransaction', () => {
             log: jest.fn()
         }
         transactionRepository = {
-            createTransaction: jest.fn().mockResolvedValue(left<string, string>('Transaction failled'))
+            save: jest.fn().mockResolvedValue(left<string, string>('Transaction failled'))
         };
         accountRepository = {
             getByAmountId: jest.fn().mockReturnValue(right<null, number>(1000))
@@ -48,7 +48,7 @@ describe('CarryOutTransaction', () => {
         const targetExpected  = new EssentialData('2', 1000)
         expect(accountRepository.getByAmountId).toHaveBeenCalledTimes(2);
         expect(Transaction).toHaveBeenCalledWith(originExpected,targetExpected, 500);
-        expect(transactionRepository.createTransaction).toHaveBeenCalledTimes(1);
+        expect(transactionRepository.save).toHaveBeenCalledTimes(1);
         expect(logger.log).toHaveBeenCalledTimes(1);
         expect(logger.log).toHaveBeenCalledWith('Transaction failled');
         expect(result.value).toEqual('transaction was not carried out successfully');
@@ -60,7 +60,7 @@ describe('CarryOutTransaction', () => {
             log: jest.fn()
         }
         transactionRepository = {
-            createTransaction: jest.fn().mockResolvedValue(right<null, string>('Transaction successfully created'))
+            save: jest.fn().mockResolvedValue(right<null, string>('Transaction successfully created'))
         };
         accountRepository = {
             getByAmountId: jest.fn().mockReturnValue(right<null, number>(1000))
@@ -75,7 +75,7 @@ describe('CarryOutTransaction', () => {
         const result = await carryOutTransaction.execute(params);
 
         expect(accountRepository.getByAmountId).toHaveBeenCalledTimes(2);
-        expect(transactionRepository.createTransaction).toHaveBeenCalledTimes(1);
+        expect(transactionRepository.save).toHaveBeenCalledTimes(1);
         expect(result.value).toEqual('transaction was carried out sucessfully');
     });
 
