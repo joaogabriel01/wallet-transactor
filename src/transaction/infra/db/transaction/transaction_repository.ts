@@ -11,7 +11,7 @@ export class TransactionRepository {
     }
 
     async save(transaction: Transaction): Promise<Transaction> {
-        const entityOrm = OrmTransferCore.domainToOrm(transaction)
+        const entityOrm = OrmTransferCore.domainToOrm(transaction);
         const transactionEntity = this.ormRepository.create(entityOrm);
         const savedTransaction =
             await this.ormRepository.save(transactionEntity);
