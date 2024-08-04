@@ -5,22 +5,22 @@ import { EssentialData } from '../domain/essential_account_data';
 
 export class CarryOutTransaction {
     private readonly transactionRepository;
-    private readonly accountRepository;
+    private readonly walletRepository;
     private readonly logger;
     constructor(
         transactionRepository: any,
-        accountRepository: any,
+        walletRepository: any,
         logger: any,
     ) {
         this.transactionRepository = transactionRepository;
-        this.accountRepository = accountRepository;
+        this.walletRepository = walletRepository;
         this.logger = logger;
     }
 
     public async execute(input: TransactionParameters) {
         const { accountOriginId, accountSenderId, valueToTransfer } = input;
-        const amountOrigin = this.accountRepository.getByAmountId();
-        const amountSender = this.accountRepository.getByAmountId();
+        const amountOrigin = this.walletRepository.getByAmountId();
+        const amountSender = this.walletRepository.getByAmountId();
 
         const transaction = new Transaction(
             new EssentialData(accountOriginId, amountOrigin.value),
