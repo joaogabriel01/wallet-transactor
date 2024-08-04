@@ -5,7 +5,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin'],
+  plugins: ['@typescript-eslint/eslint-plugin', 'decorator-position'],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
@@ -24,6 +24,11 @@ module.exports = {
     "indent": ["error", 4],
     "prettier/prettier": ["error", {
       "tabWidth": 4
+    }],
+    "decorator-position/decorator-position": ["error", {
+      "decorators": ["Property"],
+      "allowDecorators": ["MethodDefinition"],
+      "placement": "above"
     }]
   },
 };
