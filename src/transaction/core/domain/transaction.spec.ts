@@ -19,8 +19,7 @@ describe('Transaction Domain', () => {
         if (response.isLeft()) {
             return;
         }
-        const valueAccountOrigin =
-            transaction.getOriginAccountAmount();
+        const valueAccountOrigin = transaction.getOriginAccountAmount();
         expect(valueAccountOrigin.value).toBe(expectedAmountOrigin);
         const valueAccountSender = transaction.getTargetAccountAmount();
         expect(valueAccountSender.value).toBe(expectedAmountSender);
@@ -28,8 +27,8 @@ describe('Transaction Domain', () => {
 
     it('should return an error when the amount is greater than the balance in the account', () => {
         const transaction = new Transaction(
-            new EssentialData('accountOrigin',100),
-            new EssentialData('accountSender',10),
+            new EssentialData('accountOrigin', 100),
+            new EssentialData('accountSender', 10),
             1000,
         );
         runTest(
@@ -45,8 +44,8 @@ describe('Transaction Domain', () => {
 
     it('should execute successfully when the amount is within the balance in the account', () => {
         const transaction = new Transaction(
-            new EssentialData('accountOrigin',100),
-            new EssentialData('accountSender',10),
+            new EssentialData('accountOrigin', 100),
+            new EssentialData('accountSender', 10),
             10,
         );
         runTest(
