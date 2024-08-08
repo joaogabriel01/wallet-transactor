@@ -1,11 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
+import { Repository } from 'typeorm';
+import { Wallet } from './entities/wallet.entity';
+import { Either, left } from '../utils/either';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class WalletService {
-    create(createWalletDto: CreateWalletDto) {
-        return 'This action adds a new wallet';
+    constructor(
+        @InjectRepository(Wallet)
+        private walletRepository: Repository<Wallet>,
+    ) {}
+
+    async create(createWalletDto: CreateWalletDto): Promise<Either<string, number>> {
+        const alreadyExists = await this.walletRepository.find({
+            where: {
+                name: createWalletDto.name
+            }
+        })
+        if ( alreadyExists.length > 0) {
+            return left('User already exists')
+        }
+        return left('Unexpected error when creating user');
     }
 
     findAll() {
