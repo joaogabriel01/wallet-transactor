@@ -8,5 +8,8 @@ export class Wallet {
     ballance: number;
 
     @Column()
-    name: number;
+    name: string;
+
+    @Column()
+    password?: string;
 }
