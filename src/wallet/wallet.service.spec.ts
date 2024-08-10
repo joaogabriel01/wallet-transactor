@@ -35,7 +35,7 @@ describe('WalletService', () => {
         expect(walletRepository).toBeDefined();
     });
 
-    it('should return a unexpected error when creating user', async () => {
+    it('should return a unexpected error when repository throw error', async () => {
         const createDtoMock = {
             ballance: 10,
             name: 'João',
@@ -99,4 +99,13 @@ describe('WalletService', () => {
             { id: 2, ballance: 100, name: 'João' },
         ]);
     });
+
+    it('should return error when repository return error in findAll', async () => {
+        jest.spyOn(walletRepository, 'find').mockImplementation(async () => {
+            throw Error("error in find"); 
+        })
+        const wallets = await service.findAll();
+        expect(wallets.isLeft()).toBe(true);
+        expect(wallets.value).toBe('Unexpected error when find all wallets: error in find')
+    })
 });

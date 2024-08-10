@@ -44,7 +44,7 @@ export class WalletService {
             }
             return right(wallets);
         } catch(error) {
-            return left('Unexpected error when find all wallets')
+            return left('Unexpected error when find all wallets: '+ error.message)
         }
     }
 
