@@ -19,6 +19,7 @@ describe('WalletService', () => {
                         findOne: jest.fn().mockResolvedValue(null),
                         save: jest.fn().mockResolvedValue(null),
                         create: jest.fn().mockResolvedValue(null),
+                        findOneById: jest.fn().mockResolvedValue(null),
                     },
                 },
             ],
@@ -102,10 +103,25 @@ describe('WalletService', () => {
 
     it('should return error when repository return error in findAll', async () => {
         jest.spyOn(walletRepository, 'find').mockImplementation(async () => {
-            throw Error("error in find"); 
-        })
+            throw Error('error in find');
+        });
         const wallets = await service.findAll();
         expect(wallets.isLeft()).toBe(true);
-        expect(wallets.value).toBe('Unexpected error when find all wallets: error in find')
-    })
+        expect(wallets.value).toBe(
+            'Unexpected error when find all wallets: error in find',
+        );
+    });
+
+    it('should return a user in findOne', async () => {
+        const walletExpected = { id: 1, ballance: 10, name: 'João' };
+        jest.spyOn(walletRepository, 'findOneById').mockResolvedValue({
+            id: 1,
+            ballance: 10,
+            name: 'João',
+            password: '1234',
+        });
+        const wallet = await service.findOne(1);
+        expect(wallet.isRight()).toBe(true);
+        expect(wallet.value).toEqual(walletExpected);
+    });
 });

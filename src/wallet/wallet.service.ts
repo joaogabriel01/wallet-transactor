@@ -48,8 +48,17 @@ export class WalletService {
         }
     }
 
-    findOne(id: number) {
-        return `This action returns a #${id} wallet`;
+    async findOne(id: number): Promise<Either<string, WalletOutputDto>> {
+        try {
+            const wallet = await this.walletRepository.findOneById(id);
+            if (!wallet) {
+                return left('User not exists');
+            }
+            return right(this.toWalletDto(wallet));
+        }
+        catch(error) {
+            return left('Unexpected error when findOne: '+ error.message);
+        }
     }
 
     update(id: number, updateWalletDto: UpdateWalletDto) {
