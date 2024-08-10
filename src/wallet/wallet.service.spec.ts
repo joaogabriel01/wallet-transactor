@@ -86,4 +86,16 @@ describe('WalletService', () => {
         expect(response.isRight()).toBe(true);
     });
 
+    it('should return all wallets', async () => {
+        jest.spyOn(walletRepository, 'find').mockResolvedValue([
+            { id: 1, ballance: 10, name: 'João', password: '123' },
+            { id: 2, ballance: 100, name: 'João', password: '1234' },
+        ]);
+        const wallets = await service.findAll();
+        expect(wallets.isRight()).toBe(true);
+        expect(wallets.value).toEqual([
+            { id: 1, ballance: 10, name: 'João' },
+            { id: 2, ballance: 100, name: 'João' },
+        ]);
+    });
 });

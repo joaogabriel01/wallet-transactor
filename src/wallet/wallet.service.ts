@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Wallet } from './entities/wallet.entity';
 import { Either, left, right } from '../utils/either';
 import { InjectRepository } from '@nestjs/typeorm';
+import { WalletOutputDto } from './dto/wallet-output-dto';
 
 @Injectable()
 export class WalletService {
@@ -34,8 +35,17 @@ export class WalletService {
         
     }
 
-    findAll() {
-        return `This action returns all wallet`;
+    async findAll(): Promise<Either<string, WalletOutputDto[]>>{
+        try {
+            const allWalletsEntity = await this.walletRepository.find();
+            const wallets: WalletOutputDto[] = []
+            for (let i = 0; i < allWalletsEntity.length; i++) {
+                wallets.push(this.toWalletDto(allWalletsEntity[i]));
+            }
+            return right(wallets);
+        } catch(error) {
+            return left('Unexpected error when find all wallets')
+        }
     }
 
     findOne(id: number) {
@@ -48,5 +58,10 @@ export class WalletService {
 
     remove(id: number) {
         return `This action removes a #${id} wallet`;
+    }
+
+    toWalletDto(entity: Wallet): WalletOutputDto {
+        const { id, ballance, name } = entity;
+        return { id, ballance, name };
     }
 }
