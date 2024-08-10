@@ -3,7 +3,7 @@ import { CreateWalletDto } from './dto/create-wallet.dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
 import { Repository } from 'typeorm';
 import { Wallet } from './entities/wallet.entity';
-import { Either, left } from '../utils/either';
+import { Either, left, right } from '../utils/either';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -14,15 +14,24 @@ export class WalletService {
     ) {}
 
     async create(createWalletDto: CreateWalletDto): Promise<Either<string, number>> {
-        const alreadyExists = await this.walletRepository.find({
-            where: {
-                name: createWalletDto.name
+        try {
+            const alreadyExists = await this.walletRepository.find({
+                where: {
+                    name: createWalletDto.name
+                }
+            })
+            if ( alreadyExists.length > 0) {
+                return left('User already exists')
             }
-        })
-        if ( alreadyExists.length > 0) {
-            return left('User already exists')
+    
+            const wallet = this.walletRepository.create(createWalletDto)
+            const newWallet = await this.walletRepository.save(wallet)
+            return right(newWallet.id)
+        } catch (error) {
+            return left('Unexpected error when creating user: ' + error.message);
         }
-        return left('Unexpected error when creating user');
+
+        
     }
 
     findAll() {

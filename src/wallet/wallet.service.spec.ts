@@ -13,7 +13,9 @@ describe('WalletService', () => {
             providers: [WalletService, {
                 provide: getRepositoryToken(Wallet),
                 useValue: {
-                    find: jest.fn().mockResolvedValue([])
+                    find: jest.fn().mockResolvedValue([]),
+                    save: jest.fn().mockResolvedValue([]),
+                    create: jest.fn().mockResolvedValue([]),
                 }
             }],
         }).compile();
@@ -33,9 +35,12 @@ describe('WalletService', () => {
             name: "João",
             password: "123"
         }
+        jest.spyOn(walletRepository, 'find').mockImplementationOnce(() => {
+            throw new Error('Fake Error');
+          });
         const response = await service.create(createDtoMock)
         expect(response.isLeft()).toBe(true);
-        expect(response.value).toBe("Unexpected error when creating user")
+        expect(response.value).toBe("Unexpected error when creating user: Fake Error")
     });
 
     it('should return a error if the user exists', async () => {
@@ -54,4 +59,21 @@ describe('WalletService', () => {
         expect(response.isLeft()).toBe(true);
         expect(response.value).toBe("User already exists")
     });
+
+    it('should return new id if the creation works', async()=>{
+        const createDtoMock = {
+            ballance: 10, 
+            name: "João",
+            password: "123"
+        }
+        jest.spyOn(walletRepository, 'save').mockImplementationOnce(async () => {
+            return {
+                id: 1,
+                ...createDtoMock
+            }
+          });
+        const response = await service.create(createDtoMock);
+        expect(response.value).toBe(1);
+        expect(response.isRight()).toBe(true);
+    })
 });
