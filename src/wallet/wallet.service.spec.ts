@@ -16,8 +16,9 @@ describe('WalletService', () => {
                     provide: getRepositoryToken(Wallet),
                     useValue: {
                         find: jest.fn().mockResolvedValue([]),
-                        save: jest.fn().mockResolvedValue([]),
-                        create: jest.fn().mockResolvedValue([]),
+                        findOne: jest.fn().mockResolvedValue(null),
+                        save: jest.fn().mockResolvedValue(null),
+                        create: jest.fn().mockResolvedValue(null),
                     },
                 },
             ],
@@ -40,7 +41,7 @@ describe('WalletService', () => {
             name: 'João',
             password: '123',
         };
-        jest.spyOn(walletRepository, 'find').mockImplementationOnce(() => {
+        jest.spyOn(walletRepository, 'findOne').mockImplementationOnce(() => {
             throw new Error('Fake Error');
         });
         const response = await service.create(createDtoMock);
@@ -61,7 +62,7 @@ describe('WalletService', () => {
             ballance: 10,
             name: 'João',
         };
-        jest.spyOn(walletRepository, 'find').mockResolvedValueOnce([userMock]);
+        jest.spyOn(walletRepository, 'findOne').mockResolvedValueOnce(userMock);
         const response = await service.create(createDtoMock);
         expect(response.isLeft()).toBe(true);
         expect(response.value).toBe('User already exists');

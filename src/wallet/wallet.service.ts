@@ -16,12 +16,12 @@ export class WalletService {
 
     async create(createWalletDto: CreateWalletDto): Promise<Either<string, number>> {
         try {
-            const alreadyExists = await this.walletRepository.find({
+            const alreadyExists = await this.walletRepository.findOne({
                 where: {
                     name: createWalletDto.name
                 }
             })
-            if ( alreadyExists.length > 0) {
+            if (alreadyExists) {
                 return left('User already exists')
             }
     
