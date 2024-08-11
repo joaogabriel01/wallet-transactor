@@ -17,55 +17,49 @@ export class WalletService {
     async create(
         createWalletDto: CreateWalletDto,
     ): Promise<Either<string, number>> {
-        try {
-            const alreadyExists = await this.walletRepository.findOne({
-                where: {
-                    name: createWalletDto.name,
-                },
-            });
-            if (alreadyExists) {
-                return left('User already exists');
-            }
-
-            const wallet = this.walletRepository.create(createWalletDto);
-            const newWallet = await this.walletRepository.save(wallet);
-            return right(newWallet.id);
-        } catch (error) {
-            return left(
-                'Unexpected error when creating user: ' + error.message,
-            );
+        const alreadyExists = await this.walletRepository.findOne({
+            where: {
+                name: createWalletDto.name,
+            },
+        });
+        if (alreadyExists) {
+            return left('User already exists');
         }
+
+        const wallet = this.walletRepository.create(createWalletDto);
+        const newWallet = await this.walletRepository.save(wallet);
+        return right(newWallet.id);
     }
 
     async findAll(): Promise<Either<string, WalletOutputDto[]>> {
-        try {
-            const allWalletsEntity = await this.walletRepository.find();
-            const wallets: WalletOutputDto[] = [];
-            for (let i = 0; i < allWalletsEntity.length; i++) {
-                wallets.push(this.toWalletDto(allWalletsEntity[i]));
-            }
-            return right(wallets);
-        } catch (error) {
-            return left(
-                'Unexpected error when find all wallets: ' + error.message,
-            );
+        const allWalletsEntity = await this.walletRepository.find();
+        const wallets: WalletOutputDto[] = [];
+        for (let i = 0; i < allWalletsEntity.length; i++) {
+            wallets.push(this.toWalletDto(allWalletsEntity[i]));
         }
+        return right(wallets);
     }
 
     async findOne(id: number): Promise<Either<string, WalletOutputDto>> {
-        try {
-            const wallet = await this.walletRepository.findOneById(id);
-            if (!wallet) {
-                return left('User not exists');
-            }
-            return right(this.toWalletDto(wallet));
-        } catch (error) {
-            return left('Unexpected error when findOne: ' + error.message);
+        const wallet = await this.walletRepository.findOneById(id);
+        if (!wallet) {
+            return left('User not exists');
         }
+        return right(this.toWalletDto(wallet));
     }
 
-    update(id: number, updateWalletDto: UpdateWalletDto) {
-        return `This action updates a #${id} wallet`;
+    async update(
+        id: number,
+        updateWalletDto: UpdateWalletDto,
+    ): Promise<Either<string, number>> {
+        const wallet = await this.walletRepository.findOneById(id);
+        if (wallet) {
+            const walletEntity =
+                await this.walletRepository.create(updateWalletDto);
+            const walletSaved = await this.walletRepository.save(walletEntity);
+            return right(walletSaved.id);
+        }
+        return left('Wallet not found');
     }
 
     remove(id: number) {

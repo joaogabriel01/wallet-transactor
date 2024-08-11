@@ -45,10 +45,9 @@ describe('WalletService', () => {
         jest.spyOn(walletRepository, 'findOne').mockImplementationOnce(() => {
             throw new Error('Fake Error');
         });
-        const response = await service.create(createDtoMock);
-        expect(response.isLeft()).toBe(true);
-        expect(response.value).toBe(
-            'Unexpected error when creating user: Fake Error',
+
+        await expect(service.create(createDtoMock)).rejects.toThrow(
+            'Fake Error',
         );
     });
 
@@ -103,13 +102,10 @@ describe('WalletService', () => {
 
     it('should return error when repository return error in findAll', async () => {
         jest.spyOn(walletRepository, 'find').mockImplementation(async () => {
-            throw Error('error in find');
+            throw Error('Fake Error');
         });
-        const wallets = await service.findAll();
-        expect(wallets.isLeft()).toBe(true);
-        expect(wallets.value).toBe(
-            'Unexpected error when find all wallets: error in find',
-        );
+
+        await expect(service.findAll()).rejects.toThrow('Fake Error');
     });
 
     it('should return a user in findOne', async () => {
@@ -123,5 +119,33 @@ describe('WalletService', () => {
         const wallet = await service.findOne(1);
         expect(wallet.isRight()).toBe(true);
         expect(wallet.value).toEqual(walletExpected);
+    });
+
+    it('should return error when repository return error in findOne', async () => {
+        jest.spyOn(walletRepository, 'findOneById').mockImplementation(
+            async () => {
+                throw Error('Fake Error');
+            },
+        );
+        await expect(service.findOne(1)).rejects.toThrow('Fake Error');
+    });
+
+    it('should return id in update wallet', async () => {
+        const walletExpected = { ballance: 15, name: 'João' };
+        jest.spyOn(walletRepository, 'findOneById').mockResolvedValue({
+            id: 1,
+            ballance: 10,
+            name: 'João',
+            password: '1234',
+        });
+        jest.spyOn(walletRepository, 'save').mockResolvedValue({
+            id: 1,
+            ballance: 15,
+            name: 'João',
+            password: '1234',
+        });
+        const wallet = await service.update(1, walletExpected);
+        expect(wallet.isRight()).toBe(true);
+        expect(wallet.value).toBe(1);
     });
 });
