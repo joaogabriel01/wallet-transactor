@@ -63,12 +63,12 @@ export class WalletService {
         return left('Wallet not found');
     }
 
-    async remove(id: number): Promise<Either<string, boolean>>{
-        const result = await this.walletRepository.delete(id)
+    async remove(id: number): Promise<Either<string, boolean>> {
+        const result = await this.walletRepository.delete(id);
         if (result.affected == 0) {
-            return left('Wallet not found for deletion')
+            return left('Wallet not found for deletion');
         }
-        return right(true)
+        return right(true);
     }
 
     toWalletDto(entity: Wallet): WalletOutputDto {
