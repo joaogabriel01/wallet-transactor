@@ -131,20 +131,24 @@ describe('WalletService', () => {
     });
 
     it('should return id in update wallet', async () => {
-        const walletExpected = { ballance: 15, name: 'João' };
+        const dataWallet = { ballance: 15, name: 'João' };
         jest.spyOn(walletRepository, 'findOneById').mockResolvedValue({
             id: 1,
             ballance: 10,
             name: 'João',
             password: '1234',
         });
-        jest.spyOn(walletRepository, 'save').mockResolvedValue({
-            id: 1,
-            ballance: 15,
+        jest.spyOn(walletRepository, 'save').mockImplementationOnce(async (wallet: Wallet)=> {
+            return wallet;
+        })
+
+        jest.spyOn(walletRepository, 'create').mockReturnValue({
+            id: null,
+            ballance: 10,
             name: 'João',
-            password: '1234',
         });
-        const wallet = await service.update(1, walletExpected);
+
+        const wallet = await service.update(1, dataWallet);
         expect(wallet.isRight()).toBe(true);
         expect(wallet.value).toBe(1);
     });

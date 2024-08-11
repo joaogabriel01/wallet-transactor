@@ -56,6 +56,7 @@ export class WalletService {
         if (wallet) {
             const walletEntity =
                 await this.walletRepository.create(updateWalletDto);
+            walletEntity.id = id;
             const walletSaved = await this.walletRepository.save(walletEntity);
             return right(walletSaved.id);
         }
