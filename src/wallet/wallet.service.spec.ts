@@ -20,6 +20,7 @@ describe('WalletService', () => {
                         save: jest.fn().mockResolvedValue(null),
                         create: jest.fn().mockResolvedValue(null),
                         findOneById: jest.fn().mockResolvedValue(null),
+                        delete: jest.fn().mockRejectedValue(null)
                     },
                 },
             ],
@@ -152,4 +153,31 @@ describe('WalletService', () => {
         expect(wallet.isRight()).toBe(true);
         expect(wallet.value).toBe(1);
     });
+
+    it('should return true when remove wallet', async () => {
+        jest.spyOn(walletRepository, 'delete').mockResolvedValue({
+            raw: null,
+            affected: 1
+        })
+        const worked = await service.remove(1);
+        expect(worked.isRight()).toBe(true);
+        expect(worked.value).toBe(true)
+    })
+
+    it('should return error when wallet repository in the delete method does not affect rows', async () => {
+        jest.spyOn(walletRepository, 'delete').mockResolvedValue({
+            raw: null,
+            affected: 0
+        })
+        const worked = await service.remove(1);
+        expect(worked.isLeft()).toBe(true);
+        expect(worked.value).toBe('Wallet not found for deletion')
+    })
+
+    it('should return a exception when wallet repository in the delete method does return a expection', async() => {
+        jest.spyOn(walletRepository, 'delete').mockImplementation(async () => {
+            throw Error('Fake Exception');
+        })
+        await expect(service.remove(1)).rejects.toThrow('Fake Exception')
+    })
 });
