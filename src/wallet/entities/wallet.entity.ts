@@ -1,16 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class Wallet {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryColumn({ type: 'uuid' })
+    id: string;
 
     @Column()
     ballance: number;
 
-    @Column()
-    name: string;
-
-    @Column()
-    password?: string;
+   @Column()
+   document: string;
 }

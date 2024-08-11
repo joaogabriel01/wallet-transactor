@@ -16,10 +16,10 @@ export class WalletService {
 
     async create(
         createWalletDto: CreateWalletDto,
-    ): Promise<Either<string, number>> {
+    ): Promise<Either<string, string>> {
         const alreadyExists = await this.walletRepository.findOne({
             where: {
-                name: createWalletDto.name,
+                document: createWalletDto.document,
             },
         });
         if (alreadyExists) {
@@ -40,7 +40,7 @@ export class WalletService {
         return right(wallets);
     }
 
-    async findOne(id: number): Promise<Either<string, WalletOutputDto>> {
+    async findOne(id: string): Promise<Either<string, WalletOutputDto>> {
         const wallet = await this.walletRepository.findOneById(id);
         if (!wallet) {
             return left('User not exists');
@@ -49,9 +49,9 @@ export class WalletService {
     }
 
     async update(
-        id: number,
+        id: string,
         updateWalletDto: UpdateWalletDto,
-    ): Promise<Either<string, number>> {
+    ): Promise<Either<string, string>> {
         const wallet = await this.walletRepository.findOneById(id);
         if (wallet) {
             const walletEntity =
@@ -63,7 +63,7 @@ export class WalletService {
         return left('Wallet not found');
     }
 
-    async remove(id: number): Promise<Either<string, boolean>> {
+    async remove(id: string): Promise<Either<string, boolean>> {
         const result = await this.walletRepository.delete(id);
         if (result.affected == 0) {
             return left('Wallet not found for deletion');
@@ -72,7 +72,7 @@ export class WalletService {
     }
 
     toWalletDto(entity: Wallet): WalletOutputDto {
-        const { id, ballance, name } = entity;
-        return { id, ballance, name };
+        const { id, ballance, document } = entity;
+        return { id, ballance, document };
     }
 }

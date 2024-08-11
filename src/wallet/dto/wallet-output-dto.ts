@@ -1,5 +1,5 @@
 export class WalletOutputDto {
-    id: number;
+    id: string;
     ballance: number;
-    name: string;
+    document: string;
 }
