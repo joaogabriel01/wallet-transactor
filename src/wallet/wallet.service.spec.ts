@@ -44,11 +44,11 @@ describe('WalletService', () => {
             password: '123',
         };
         jest.spyOn(walletRepository, 'findOne').mockImplementationOnce(() => {
-            throw new Error('Fake Error');
+            throw new Error('Fake Exception');
         });
 
         await expect(service.create(createDtoMock)).rejects.toThrow(
-            'Fake Error',
+            'Fake Exception',
         );
     });
 
@@ -103,10 +103,10 @@ describe('WalletService', () => {
 
     it('should return error when repository return error in findAll', async () => {
         jest.spyOn(walletRepository, 'find').mockImplementation(async () => {
-            throw Error('Fake Error');
+            throw Error('Fake Exception');
         });
 
-        await expect(service.findAll()).rejects.toThrow('Fake Error');
+        await expect(service.findAll()).rejects.toThrow('Fake Exception');
     });
 
     it('should return a user in findOne', async () => {
@@ -125,10 +125,10 @@ describe('WalletService', () => {
     it('should return error when repository return error in findOne', async () => {
         jest.spyOn(walletRepository, 'findOneById').mockImplementation(
             async () => {
-                throw Error('Fake Error');
+                throw Error('Fake Exception');
             },
         );
-        await expect(service.findOne(1)).rejects.toThrow('Fake Error');
+        await expect(service.findOne(1)).rejects.toThrow('Fake Exception');
     });
 
     it('should return id in update wallet', async () => {
