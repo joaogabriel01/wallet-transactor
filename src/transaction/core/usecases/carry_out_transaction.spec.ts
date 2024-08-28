@@ -41,7 +41,7 @@ describe('CarryOutTransaction', () => {
         transactionRepository = {
             save: jest
                 .fn()
-                .mockResolvedValue(left<string, string>('Transaction failled')),
+                .mockResolvedValue(left<Error, string>(new Error('Transaction failled'))),
         };
         accountRepository = {
             getByAmountId: jest.fn().mockReturnValue(right<null, number>(1000)),
@@ -69,7 +69,9 @@ describe('CarryOutTransaction', () => {
         expect(transactionRepository.save).toHaveBeenCalledTimes(1);
         expect(logger.log).toHaveBeenCalledTimes(1);
         expect(logger.log).toHaveBeenCalledWith('Transaction failled');
-        expect(result.value).toEqual(
+        expect(result.isLeft()).toBe(true);
+        expect(result.value).toBeInstanceOf(Error);
+        expect((result.value as Error).message).toEqual(
             'transaction was not carried out successfully',
         );
     });

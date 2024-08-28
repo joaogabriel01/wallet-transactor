@@ -13,15 +13,15 @@ export class AuthService {
     async signIn(
         username: string,
         pass: string,
-    ): Promise<Either<string, string>> {
+    ): Promise<Either<Error, string>> {
         const messageUserIncorrect = 'Incorrect username or password';
         const user = await this.usersService.findOne(username);
         if (user.isLeft()) {
-            return left(messageUserIncorrect);
+            return left(new Error(messageUserIncorrect));
         }
         const userValues = user.value;
         if (userValues?.password !== pass) {
-            return left(messageUserIncorrect);
+            return left(new Error(messageUserIncorrect));
         }
         const { password, ...result } = userValues;
         const payload = { sub: userValues.id, username: userValues.username };

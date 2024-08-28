@@ -5,7 +5,7 @@ describe('Transaction Domain', () => {
     function runTest(
         transaction: Transaction,
         expectError: boolean,
-        expectedResponse: boolean | string,
+        expectedResponse: boolean | Error,
         expectedAmountOrigin: number,
         expectedAmountSender: number,
         expectedIdOrigin: string,
@@ -15,7 +15,7 @@ describe('Transaction Domain', () => {
         expect(transaction.getTargetId().value).toBe(expectedIdSender);
         const response = transaction.execute();
         expect(response.isLeft()).toBe(expectError);
-        expect(response.value).toBe(expectedResponse);
+        expect(response.value).toEqual(expectedResponse);
         if (response.isLeft()) {
             return;
         }
@@ -34,7 +34,7 @@ describe('Transaction Domain', () => {
         runTest(
             transaction,
             true,
-            'amount is greater than the balance in the account',
+            new Error('amount is greater than the balance in the account'),
             0,
             0,
             'accountOrigin',

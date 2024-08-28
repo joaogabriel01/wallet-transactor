@@ -64,7 +64,8 @@ describe('WalletService', () => {
         jest.spyOn(walletRepository, 'findOne').mockResolvedValueOnce(userMock);
         const response = await service.create(createDtoMock);
         expect(response.isLeft()).toBe(true);
-        expect(response.value).toBe('User already exists');
+        expect(response.value).toBeInstanceOf(Error);
+        expect((response.value as Error).message).toBe('User already exists');
     });
 
     it('should return new id if the creation works', async () => {
@@ -168,7 +169,9 @@ describe('WalletService', () => {
         });
         const worked = await service.remove('1');
         expect(worked.isLeft()).toBe(true);
-        expect(worked.value).toBe('Wallet not found for deletion');
+        expect(worked.value).toBeInstanceOf(Error);
+
+        expect((worked.value as Error).message).toBe('Wallet not found for deletion');
     });
 
     it('should return a exception when wallet repository in the delete method does return a expection', async () => {

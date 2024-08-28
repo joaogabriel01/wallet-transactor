@@ -21,11 +21,11 @@ export class Transaction {
         this.date = new Date();
     }
 
-    public execute(): Either<string, boolean> {
+    public execute(): Either<Error, boolean> {
         const originAmount = this.originAccount.getAmount();
         if (this.value > originAmount) {
-            return left<string, boolean>(
-                'amount is greater than the balance in the account',
+            return left(
+                new Error('amount is greater than the balance in the account'),
             );
         }
         this.originAccount.setAmount(originAmount - this.value);
@@ -33,31 +33,31 @@ export class Transaction {
         const targetAmount = this.targetAccount.getAmount();
         this.targetAccount.setAmount(targetAmount + this.value);
 
-        return right<string, boolean>(true);
+        return right(true);
     }
 
     public getAmount(): Either<string, number> {
-        return right<string, number>(this.value);
+        return right(this.value);
     }
 
     public getOriginAccountAmount(): Either<string, number> {
-        return right<string, number>(this.originAccount.getAmount());
+        return right(this.originAccount.getAmount());
     }
 
     public getTargetAccountAmount(): Either<string, number> {
-        return right<string, number>(this.targetAccount.getAmount());
+        return right(this.targetAccount.getAmount());
     }
 
     public getTransactionId(): Either<string, string> {
-        return right<string, string>(this.id);
+        return right(this.id);
     }
 
     public getOriginId(): Either<string, string> {
-        return right<string, string>(this.originAccount.getId());
+        return right(this.originAccount.getId());
     }
 
     public getTargetId(): Either<string, string> {
-        return right<string, string>(this.targetAccount.getId());
+        return right(this.targetAccount.getId());
     }
 
     public getDate(): Either<string, Date> {

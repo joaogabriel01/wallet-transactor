@@ -56,7 +56,8 @@ describe('AuthService', () => {
         );
         const token = await service.signIn('joao', '123');
         expect(token.isLeft()).toBe(true);
-        expect(token.value).toBe('Incorrect username or password');
+        expect(token.value).toBeInstanceOf(Error);
+        expect((token.value as Error).message).toBe('Incorrect username or password');
     });
 
     it('should return the token when everything goes well', async () => {

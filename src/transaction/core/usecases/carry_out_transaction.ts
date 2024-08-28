@@ -1,6 +1,6 @@
 import { TransactionParameters } from 'src/transaction/dto/transaction_parameters';
 import { Transaction } from '../domain/transaction';
-import { left, right } from '../../../../src/utils/either';
+import { Either, left, right } from '../../../../src/utils/either';
 import { EssentialData } from '../domain/essential_account_data';
 
 export class CarryOutTransaction {
@@ -17,7 +17,9 @@ export class CarryOutTransaction {
         this.logger = logger;
     }
 
-    public async execute(input: TransactionParameters) {
+    public async execute(
+        input: TransactionParameters,
+    ): Promise<Either<Error, string>> {
         const { accountOriginId, accountSenderId, valueToTransfer } = input;
         const amountOrigin = this.walletRepository.getByAmountId();
         const amountSender = this.walletRepository.getByAmountId();
@@ -29,17 +31,17 @@ export class CarryOutTransaction {
         );
         const isSuccessTransaction = transaction.execute();
         if (isSuccessTransaction.isLeft()) {
-            return isSuccessTransaction;
+            return left(new Error(isSuccessTransaction.value.message));
         }
         const transactionCreated =
             await this.transactionRepository.save(transaction);
         if (transactionCreated.isLeft()) {
-            this.logger.log(transactionCreated.value);
-            return left<string, null>(
-                'transaction was not carried out successfully',
+            this.logger.log(transactionCreated.value.message);
+            return left(
+                new Error('transaction was not carried out successfully'),
             );
         }
 
-        return right<null, string>('transaction was carried out sucessfully');
+        return right('transaction was carried out sucessfully');
     }
 }
